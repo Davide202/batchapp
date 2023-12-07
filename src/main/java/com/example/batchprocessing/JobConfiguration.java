@@ -1,6 +1,7 @@
 package com.example.batchprocessing;
 
-import com.example.config.JobCompletionNotificationListener;
+import com.example.config.FlatFileItemReaderConfig;
+import com.example.config.JobExecutionListenerConfiguration;
 import com.example.config.PersonItemProcessor;
 import com.example.domain.Person;
 import com.example.domain.PersonEntity;
@@ -29,15 +30,15 @@ public class JobConfiguration {
     JdbcTransactionManager transactionManager;
     @Autowired
     JobRepository jobRepository;
-
-
+//    @Autowired
+//    FlatFileItemReaderConfig flatFileItemReaderConfig;
 
     @Bean
     @SneakyThrows
     public Job importUserJob(
             JobRepository jobRepository,
             Step step1,
-            JobCompletionNotificationListener listener
+            JobExecutionListenerConfiguration listener
     ) {
 
         log.info("Start Job Import User");
@@ -62,9 +63,9 @@ public class JobConfiguration {
         log.info("Start Step Import User");
         Step step = new StepBuilder("step1-" + UUID.randomUUID(), jobRepository)
                 .<Person, PersonEntity> chunk(3, transactionManager)
+//                .reader(flatFileItemReaderConfig.reader(null))
                 .reader(reader)
                 .processor(processor)
-//              .writer(new PersonEntityWriter(entityManager))
                 .writer(writer)
                 .build();
         log.info("End Step Import User");

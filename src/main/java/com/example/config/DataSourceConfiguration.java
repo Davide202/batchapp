@@ -31,7 +31,7 @@ public class DataSourceConfiguration {
     @Value("${spring.datasource.password:}")
     private String password;
 
-    private String filePath = "src/test/resources/schema-all.sql";
+    private String filePath = "src/main/resources/schema-all.sql";
 
 //    @Bean
 //    public DataSource dataSource() {

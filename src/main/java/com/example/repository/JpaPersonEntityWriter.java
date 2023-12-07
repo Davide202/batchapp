@@ -10,20 +10,35 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 
 @Transactional
 @Repository
-public class JpaPersonEntityWriter implements  ItemWriter<PersonEntity>, InitializingBean {
+public class JpaPersonEntityWriter implements  ItemWriter<PersonEntity>
+//        , InitializingBean
+{
     private static final Logger logger = LoggerFactory.getLogger(JpaPersonEntityWriter.class);
     @PersistenceContext
     EntityManager entityManager;
+    @Autowired
+    PersonRepository personRepository;
     private boolean clearPersistenceContext = true;
     private boolean usePersist = true;
 
     @Transactional
+//    @Override // FIGO MA NON FUNZIONA
+    public void write1(Chunk<? extends PersonEntity> list) throws Exception {
+        List<?> saved = personRepository.saveAll(list);
+        logger.info(saved.toString());
+    }
+
+    @Transactional
+    @Override
     public void write(Chunk<? extends PersonEntity> items) {
 //        EntityManager entityManager = EntityManagerFactoryUtils.getTransactionalEntityManager(this.entityManagerFactory);
         if (entityManager == null) {
@@ -60,8 +75,8 @@ public class JpaPersonEntityWriter implements  ItemWriter<PersonEntity>, Initial
         }
     }
 
-    @Override
-    public void afterPropertiesSet()  {
-
-    }
+//    @Override
+//    public void afterPropertiesSet()  {
+//
+//    }
 }
